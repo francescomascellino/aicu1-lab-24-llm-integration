@@ -18,6 +18,13 @@ import {
   setStatus
 } from "./incident-view.js";
 
+const REASON_LABELS = {
+  timeout: "Timeout del provider",
+  refusal: "Il provider ha rifiutato la richiesta",
+  invalid_output: "Output non valido dal provider",
+  invalid_input: "Input non valido"
+};
+
 let currentPreview = null;
 
 elements.ticketList.addEventListener("change", enforceSelectionLimit);
@@ -62,7 +69,7 @@ async function generateAndRender() {
     } else {
       currentPreview = null;
       clearPreview();
-      setStatus(result.reason || "Errore nella generazione.", "error");
+      setStatus(REASON_LABELS[result.reason] || result.reason || "Errore nella generazione.", "error");
     }
   } catch {
     currentPreview = null;
@@ -106,7 +113,7 @@ async function handlePreviewAction(event) {
       } else {
         currentPreview = null;
         clearPreview();
-        setStatus(result.reason || "Errore nella rigenerazione.", "error");
+        setStatus(REASON_LABELS[result.reason] || result.reason || "Errore nella rigenerazione.", "error");
       }
     } catch {
       currentPreview = null;
