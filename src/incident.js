@@ -41,12 +41,36 @@ async function initialize() {
 }
 
 async function generateAndRender() {
-  // TODO L24.1: validate the selection, request a preview and render it.
-  void generateIncidentPreview;
-  void getSelectedTicketIds;
-  void renderPreview;
-  void setBusy;
-  setStatus("Collega il TODO L24.1 per generare l'anteprima.", "info");
+  const ticketIds = getSelectedTicketIds();
+
+  if (ticketIds.length < 2 || ticketIds.length > 4) {
+    setStatus("Seleziona da due a quattro ticket.", "error");
+    return;
+  }
+
+  const scenario = elements.scenario.value;
+  setBusy(true);
+  setStatus("Generazione in corso...", "info");
+
+  try {
+    const result = await generateIncidentPreview({ ticketIds, scenario });
+
+    if (result.ok) {
+      currentPreview = result.preview;
+      renderPreview(result.preview);
+      setStatus("Anteprima generata. Controlla e salva quando pronto.", "info");
+    } else {
+      currentPreview = null;
+      clearPreview();
+      setStatus(result.reason || "Errore nella generazione.", "error");
+    }
+  } catch {
+    currentPreview = null;
+    clearPreview();
+    setStatus("Errore di connessione al server.", "error");
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function handlePreviewAction(event) {
