@@ -1,0 +1,31 @@
+{
+  "name": "aicu-l24-ai-feature-starter",
+  "version": "0.7.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "packageManager": "pnpm@11.5.1",
+  "scripts": {
+    "dev": "node scripts/start-l24.js",
+    "dev:replay": "node scripts/start-l24.js --provider=replay",
+    "dev:mistral": "node scripts/start-l24.js --provider=mistral",
+    "dev:opencode": "node scripts/start-l24.js --provider=opencode",
+    "start": "node server/index.js",
+    "check": "node --check server/index.js && node --check server/app.js && node --check server/ticket-rules.js && node --check server/validation.js && node --check server/ai/provider-error.js && node --check server/ai/mistral-adapter.js && node --check server/ai/incident-brief-validator.js && node --check server/ai/incident-brief-service.js && node --check server/ai/incident-replay-adapter.js && node --check server/ai/opencode-adapter.js && node --check scripts/start-l24.js && node --check src/main.js && node --check src/incident-api.js && node --check src/incident-view.js && node --check src/incident.js",
+    "test": "node --test \"tests/unit/*.test.js\" \"tests/api/*.test.js\"",
+    "test:unit": "node --test \"tests/unit/*.test.js\"",
+    "test:api": "node --test \"tests/api/*.test.js\"",
+    "start:test": "node scripts/start-test-server.js",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm test && pnpm test:e2e",
+    "test:l24": "node --test \"tests/unit/incident-brief.test.js\" \"tests/api/incident-routes.test.js\"",
+    "exercise:l24": "pnpm check && pnpm test:l24",
+    "verify:l24": "pnpm exercise:l24 && pnpm test:e2e --grep \"incident\"",
+    "setup:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}

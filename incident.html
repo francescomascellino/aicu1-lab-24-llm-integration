@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sintesi multi-ticket</title>
+    <link rel="stylesheet" href="/src/incident.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <a class="back-link" href="/">Dashboard ticket</a>
+        <h1>Sintesi multi-ticket</h1>
+        <p>Trasforma ticket selezionati in una proposta controllabile e revisionabile.</p>
+      </div>
+      <div class="provider-status">
+        <span>Provider effettivo</span>
+        <strong id="provider-name">non ancora chiamato</strong>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="ticket-panel" aria-labelledby="tickets-title">
+        <div class="section-heading">
+          <div>
+            <span class="step">1</span>
+            <h2 id="tickets-title">Seleziona i ticket</h2>
+          </div>
+          <span id="selection-count" class="count">0 / 4</span>
+        </div>
+
+        <p class="hint">Scegli da 2 a 4 ticket. Verranno usati soltanto i ticket selezionati.</p>
+        <div id="ticket-list" class="ticket-list" aria-live="polite"></div>
+
+        <label class="scenario-field" for="scenario">
+          Scenario Replay
+          <select id="scenario">
+            <option value="success">success</option>
+            <option value="timeout">timeout</option>
+            <option value="refusal">refusal</option>
+            <option value="invalid_output">invalid_output</option>
+          </select>
+        </label>
+
+        <button id="generate-button" class="primary-button" type="button">
+          Genera sintesi
+        </button>
+      </section>
+
+      <section class="preview-panel" aria-labelledby="preview-title">
+        <div class="section-heading">
+          <div>
+            <span class="step">2</span>
+            <h2 id="preview-title">Controlla la sintesi</h2>
+          </div>
+          <span id="preview-state" class="state-badge">vuota</span>
+        </div>
+
+        <div id="empty-preview" class="empty-state">
+          <strong>Nessuna sintesi generata</strong>
+          <span>Seleziona i ticket e avvia la generazione.</span>
+        </div>
+
+        <form id="preview-form" hidden>
+          <p class="preview-warning">Anteprima generata dall'AI - non salvata</p>
+
+          <label>
+            Titolo
+            <input name="title" required />
+          </label>
+
+          <label>
+            Sintesi
+            <textarea name="summary" rows="4" required></textarea>
+          </label>
+
+          <label>
+            Informazioni mancanti
+            <textarea name="missingInformation" rows="3"></textarea>
+          </label>
+
+          <label>
+            Prossima azione suggerita
+            <textarea name="suggestedNextAction" rows="3" required></textarea>
+          </label>
+
+          <fieldset>
+            <legend>Indicatori di rischio</legend>
+            <div id="risk-flags" class="risk-flags"></div>
+          </fieldset>
+
+          <div class="immutable-block">
+            <h3>Evidenze controllate dal server</h3>
+            <div id="affected-ticket-ids" class="tag-list"></div>
+            <ul id="evidence-list"></ul>
+          </div>
+
+          <div class="preview-actions">
+            <button type="button" class="secondary-button" data-action="regenerate">
+              Rigenera
+            </button>
+            <button type="button" class="danger-button" data-action="discard">
+              Scarta
+            </button>
+            <button type="button" class="primary-button" data-action="save">
+              Salva come bozza
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="saved-panel" aria-labelledby="saved-title">
+        <div class="section-heading">
+          <div>
+            <span class="step">3</span>
+            <h2 id="saved-title">Bozze salvate</h2>
+          </div>
+          <span id="draft-count" class="count">0</span>
+        </div>
+        <p class="hint">Solo Salva come bozza aggiunge una sintesi al database.</p>
+        <div id="saved-drafts" class="saved-list"></div>
+      </aside>
+    </main>
+
+    <div id="app-status" class="app-status" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/incident.js"></script>
+  </body>
+</html>
