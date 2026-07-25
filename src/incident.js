@@ -80,10 +80,41 @@ async function handlePreviewAction(event) {
     return;
   }
 
-  if (action === "regenerate" || action === "discard") {
-    // TODO L24.2: regenerate or discard without persisting the proposal.
-    void discardIncidentPreview;
-    void clearPreview;
+  if (action === "discard") {
+    try { await discardIncidentPreview(currentPreview.id); } catch {}
+    clearPreview();
+    currentPreview = null;
+    setStatus("Anteprima scartata.", "info");
+    return;
+  }
+
+  if (action === "regenerate") {
+    try { await discardIncidentPreview(currentPreview.id); } catch {}
+
+    const ticketIds = currentPreview.draft.affectedTicketIds;
+    const scenario = elements.scenario.value;
+    setBusy(true);
+    setStatus("Rigenerazione in corso...", "info");
+
+    try {
+      const result = await generateIncidentPreview({ ticketIds, scenario });
+
+      if (result.ok) {
+        currentPreview = result.preview;
+        renderPreview(result.preview);
+        setStatus("Anteprima rigenerata.", "info");
+      } else {
+        currentPreview = null;
+        clearPreview();
+        setStatus(result.reason || "Errore nella rigenerazione.", "error");
+      }
+    } catch {
+      currentPreview = null;
+      clearPreview();
+      setStatus("Errore di connessione al server.", "error");
+    } finally {
+      setBusy(false);
+    }
     return;
   }
 
