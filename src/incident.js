@@ -126,9 +126,26 @@ async function handlePreviewAction(event) {
   }
 
   if (action === "save") {
-    // TODO L24.3: save the reviewed fields, then reload the saved drafts.
-    void saveIncidentDraft;
-    void readRevision;
-    void loadIncidentDrafts;
+    const revision = readRevision();
+    setBusy(true);
+    setStatus("Salvataggio in corso...", "info");
+
+    try {
+      const result = await saveIncidentDraft({ previewId: currentPreview.id, draft: revision });
+
+      if (result.ok) {
+        clearPreview();
+        currentPreview = null;
+        setStatus(`Bozza salvata: ${result.draft.id}`, "info");
+        const drafts = await loadIncidentDrafts();
+        renderSavedDrafts(drafts);
+      } else {
+        setStatus(result.reason || "Errore nel salvataggio.", "error");
+      }
+    } catch {
+      setStatus("Errore di connessione al server.", "error");
+    } finally {
+      setBusy(false);
+    }
   }
 }
